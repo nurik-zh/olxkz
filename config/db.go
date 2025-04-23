@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"olxkz/models"
 )
 
 var DB *gorm.DB
@@ -19,6 +18,4 @@ func ConnectDatabase() {
 
 	DB = db
 	fmt.Println("База данных подключена!")
-
-	db.AutoMigrate(&models.Product{}, &models.Category{}, &models.User{})
 }

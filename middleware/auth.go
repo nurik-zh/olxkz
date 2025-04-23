@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"net/http"
+	"olxkz/config"
+	"olxkz/models"
 	"strings"
 )
 
@@ -30,8 +32,22 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// Извлекаем username
 		claims := token.Claims.(jwt.MapClaims)
-		c.Set("username", claims["username"])
+		username := claims["username"].(string)
+
+		// Ищем user в БД
+		var user models.User
+		if err := config.DB.Where("username = ?", username).First(&user).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Пользователь не найден"})
+			c.Abort()
+			return
+		}
+
+		// Кладем в контекст и username, и userID
+		c.Set("username", user.Username)
+		c.Set("userID", user.ID)
+
 		c.Next()
 	}
 }

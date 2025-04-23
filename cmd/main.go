@@ -13,6 +13,8 @@ func main() {
 	routes.RegisterAuthRoutes(r)
 	routes.RegisterCategoryRoutes(r)
 	routes.RegisterProductRoutes(r)
+	routes.RegisterFavoriteRoutes(r)
+
 	routes.RegisterUserRoutes(r)
 
 	r.Run(":8080")
