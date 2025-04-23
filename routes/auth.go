@@ -28,7 +28,7 @@ func Register(c *gin.Context) {
 	input.Password = string(hash)
 
 	config.DB.Create(&input)
-	c.JSON(http.StatusCreated, gin.H{"message": "Пользователь зарегистрирован"})
+	c.JSON(http.StatusCreated, input)
 }
 
 func Login(c *gin.Context) {

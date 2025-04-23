@@ -13,6 +13,7 @@ func RegisterCategoryRoutes(r *gin.Engine) {
 	categories.Use(middleware.AuthMiddleware()) // защита всех маршрутов
 	{
 		categories.GET("", GetCategories)
+		categories.GET("/:id", GetCategoryByID)
 		categories.POST("", CreateCategory)
 		categories.PUT("/:id", UpdateCategory)
 		categories.DELETE("/:id", DeleteCategory)
@@ -50,6 +51,18 @@ func UpdateCategory(c *gin.Context) {
 	}
 
 	config.DB.Model(&category).Updates(updated)
+	c.JSON(http.StatusOK, category)
+}
+
+func GetCategoryByID(c *gin.Context) {
+	id := c.Param("id")
+	var category models.Category
+
+	if err := config.DB.First(&category, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Категория не найдена"})
+		return
+	}
+
 	c.JSON(http.StatusOK, category)
 }
 

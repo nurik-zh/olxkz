@@ -13,6 +13,7 @@ func RegisterProductRoutes(r *gin.Engine) {
 	products.Use(middleware.AuthMiddleware())
 	{
 		products.GET("", GetProducts)
+		products.GET("/search", SearchProducts)
 		products.POST("", CreateProduct)
 		products.PUT("/:id", UpdateProduct)
 		products.DELETE("/:id", DeleteProduct)
@@ -22,6 +23,18 @@ func RegisterProductRoutes(r *gin.Engine) {
 func GetProducts(c *gin.Context) {
 	var products []models.Product
 	config.DB.Find(&products)
+	c.JSON(http.StatusOK, products)
+}
+
+func SearchProducts(c *gin.Context) {
+	query := c.Query("q")
+	var products []models.Product
+
+	if err := config.DB.Where("name ILIKE ?", "%"+query+"%").Find(&products).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при поиске продуктов"})
+		return
+	}
+
 	c.JSON(http.StatusOK, products)
 }
 
