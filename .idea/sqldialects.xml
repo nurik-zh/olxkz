@@ -3,5 +3,9 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/config/migrations/20250423094255_create_users_table.down.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/config/migrations/20250423094255_create_users_table.up.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/config/migrations/20250430055238_create_products_table.down.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/config/migrations/20250430055238_create_products_table.up.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/config/migrations/20250430055803_create_categories_table.down.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/config/migrations/20250430055803_create_categories_table.up.sql" dialect="GenericSQL" />
   </component>
 </project>
