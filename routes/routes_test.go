@@ -34,10 +34,7 @@ func setupTestRouter() *gin.Engine {
 
 // Инициализация тестовой базы данных
 func initTestDB() {
-	// Здесь нужно настроить отдельную тестовую базу данных
-	config.ConnectDatabase()
-
-	// Очистка данных перед тестами
+	config.ConnectTestDatabase() // Подключаем ТЕСТОВУЮ базу
 	config.DB.Exec("DELETE FROM users")
 	config.DB.Exec("DELETE FROM categories")
 	config.DB.Exec("DELETE FROM products")
