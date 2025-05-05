@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -8,13 +11,22 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	dsn := "host=localhost user=postgres password=postgres dbname=olx port=5432 sslmode=disable"
+	dsn := getDSN("olx")
 	connect(dsn)
 }
 
 func ConnectTestDatabase() {
-	dsn := "host=localhost user=postgres password=postgres dbname=olxkz_test port=5432 sslmode=disable"
+	dsn := getDSN("olxkz_test")
 	connect(dsn)
+}
+
+func getDSN(dbname string) string {
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		host, user, password, dbname, port)
 }
 
 func connect(dsn string) {
