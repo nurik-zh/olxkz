@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  test-db:
+    image: postgres:15
+    container_name: olxkz_test_db
+    environment:
+      POSTGRES_DB: olxkz_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"  # Отличается от основной базы
+    volumes:
+      - test_pgdata:/var/lib/postgresql/data
+    networks:
+      - testnet
+
+volumes:
+  test_pgdata:
+
+networks:
+  testnet:

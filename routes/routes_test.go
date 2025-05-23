@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"olxkz/config"
-	"olxkz/models"
+	models2 "olxkz/models"
 	"testing"
 )
 
@@ -45,7 +45,7 @@ func TestCreateUser(t *testing.T) {
 	initTestDB()
 	router := setupTestRouter()
 
-	user := models.User{Username: "Test User", Email: "test@example.com"}
+	user := models2.User{Username: "Test User", Email: "test@example.com"}
 	body, _ := json.Marshal(user)
 
 	req, _ := http.NewRequest("POST", "/users", bytes.NewBuffer(body))
@@ -55,7 +55,7 @@ func TestCreateUser(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	var createdUser models.User
+	var createdUser models2.User
 	err := json.Unmarshal(w.Body.Bytes(), &createdUser)
 	assert.NoError(t, err)
 	assert.Equal(t, user.Email, createdUser.Email)
@@ -67,7 +67,7 @@ func TestGetUsers(t *testing.T) {
 	router := setupTestRouter()
 
 	// Добавляем пользователя вручную для теста
-	config.DB.Create(&models.User{Username: "Jane", Email: "jane@example.com"})
+	config.DB.Create(&models2.User{Username: "Jane", Email: "jane@example.com"})
 
 	req, _ := http.NewRequest("GET", "/users", nil)
 	w := httptest.NewRecorder()
@@ -75,7 +75,7 @@ func TestGetUsers(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var users []models.User
+	var users []models2.User
 	err := json.Unmarshal(w.Body.Bytes(), &users)
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, len(users), 1)
@@ -87,7 +87,7 @@ func TestCreateCategory(t *testing.T) {
 	initTestDB()
 	router := setupTestRouter()
 
-	category := models.Category{Name: "Test Category"}
+	category := models2.Category{Name: "Test Category"}
 	body, _ := json.Marshal(category)
 
 	req, _ := http.NewRequest("POST", "/categories", bytes.NewBuffer(body))
@@ -97,7 +97,7 @@ func TestCreateCategory(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	var createdCategory models.Category
+	var createdCategory models2.Category
 	err := json.Unmarshal(w.Body.Bytes(), &createdCategory)
 	assert.NoError(t, err)
 	assert.Equal(t, category.Name, createdCategory.Name)
@@ -109,7 +109,7 @@ func TestGetCategories(t *testing.T) {
 	router := setupTestRouter()
 
 	// Добавляем категорию вручную для теста
-	config.DB.Create(&models.Category{Name: "Electronics"})
+	config.DB.Create(&models2.Category{Name: "Electronics"})
 
 	req, _ := http.NewRequest("GET", "/categories", nil)
 	w := httptest.NewRecorder()
@@ -117,7 +117,7 @@ func TestGetCategories(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var categories []models.Category
+	var categories []models2.Category
 	err := json.Unmarshal(w.Body.Bytes(), &categories)
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, len(categories), 1)
@@ -130,10 +130,10 @@ func TestUpdateCategory(t *testing.T) {
 	router := setupTestRouter()
 
 	// Создаем категорию для обновления
-	category := models.Category{Name: "Old Category"}
+	category := models2.Category{Name: "Old Category"}
 	config.DB.Create(&category)
 
-	updatedCategory := models.Category{Name: "Updated Category"}
+	updatedCategory := models2.Category{Name: "Updated Category"}
 	body, _ := json.Marshal(updatedCategory)
 
 	// Используем fmt.Sprintf для преобразования ID в строку
@@ -144,7 +144,7 @@ func TestUpdateCategory(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var updated models.Category
+	var updated models2.Category
 	err := json.Unmarshal(w.Body.Bytes(), &updated)
 	assert.NoError(t, err)
 	assert.Equal(t, updatedCategory.Name, updated.Name)
@@ -156,7 +156,7 @@ func TestDeleteCategory(t *testing.T) {
 	router := setupTestRouter()
 
 	// Создаем категорию для удаления
-	category := models.Category{Name: "To Be Deleted"}
+	category := models2.Category{Name: "To Be Deleted"}
 	result := config.DB.Create(&category)
 	assert.NoError(t, result.Error) // Убедитесь, что категория успешно создана
 
@@ -169,7 +169,7 @@ func TestDeleteCategory(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	// Проверяем, что категория была удалена
-	var deletedCategory models.Category
+	var deletedCategory models2.Category
 	err := config.DB.First(&deletedCategory, category.ID).Error
 	assert.True(t, errors.Is(err, gorm.ErrRecordNotFound), "Expected error to be gorm.ErrRecordNotFound")
 }
@@ -179,7 +179,7 @@ func TestCreateProduct(t *testing.T) {
 	initTestDB()
 	router := setupTestRouter()
 
-	product := models.Product{Name: "Test Product", CategoryID: 1}
+	product := models2.Product{Name: "Test Product", CategoryID: 1}
 	body, _ := json.Marshal(product)
 
 	req, _ := http.NewRequest("POST", "/products", bytes.NewBuffer(body))
@@ -189,7 +189,7 @@ func TestCreateProduct(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	var createdProduct models.Product
+	var createdProduct models2.Product
 	err := json.Unmarshal(w.Body.Bytes(), &createdProduct)
 	assert.NoError(t, err)
 	assert.Equal(t, product.Name, createdProduct.Name)
@@ -201,7 +201,7 @@ func TestGetProducts(t *testing.T) {
 	router := setupTestRouter()
 
 	// Добавляем продукт вручную для теста
-	config.DB.Create(&models.Product{Name: "Product A", CategoryID: 1})
+	config.DB.Create(&models2.Product{Name: "Product A", CategoryID: 1})
 
 	req, _ := http.NewRequest("GET", "/products", nil)
 	w := httptest.NewRecorder()
@@ -209,7 +209,7 @@ func TestGetProducts(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var products []models.Product
+	var products []models2.Product
 	err := json.Unmarshal(w.Body.Bytes(), &products)
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, len(products), 1)
@@ -222,10 +222,10 @@ func TestUpdateProduct(t *testing.T) {
 	router := setupTestRouter()
 
 	// Создаем продукт для обновления
-	product := models.Product{Name: "Old Product", CategoryID: 1}
+	product := models2.Product{Name: "Old Product", CategoryID: 1}
 	config.DB.Create(&product)
 
-	updatedProduct := models.Product{Name: "Updated Product", CategoryID: 1}
+	updatedProduct := models2.Product{Name: "Updated Product", CategoryID: 1}
 	body, _ := json.Marshal(updatedProduct)
 
 	// Используем fmt.Sprintf для преобразования ID в строку
@@ -236,7 +236,7 @@ func TestUpdateProduct(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var updated models.Product
+	var updated models2.Product
 	err := json.Unmarshal(w.Body.Bytes(), &updated)
 	assert.NoError(t, err)
 	assert.Equal(t, updatedProduct.Name, updated.Name)
@@ -248,7 +248,7 @@ func TestDeleteProduct(t *testing.T) {
 	router := setupTestRouter()
 
 	// Создаем продукт для удаления
-	product := models.Product{Name: "To Be Deleted", CategoryID: 1}
+	product := models2.Product{Name: "To Be Deleted", CategoryID: 1}
 	config.DB.Create(&product)
 
 	// Используем fmt.Sprintf для преобразования ID в строку
@@ -259,7 +259,7 @@ func TestDeleteProduct(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	// Проверяем, что продукт был удален
-	var deletedProduct models.Product
+	var deletedProduct models2.Product
 	err := config.DB.First(&deletedProduct, product.ID).Error
 	assert.Error(t, err) // Ожидаем ошибку, так как продукт должен быть удален
 }

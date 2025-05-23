@@ -10,7 +10,6 @@ COPY go.mod go.sum ./
 # Загружаем зависимости
 RUN go mod tidy
 
-
 # Копируем весь исходный код
 COPY . .
 

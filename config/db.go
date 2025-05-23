@@ -2,7 +2,9 @@ package config
 
 import (
 	"fmt"
+	"olxkz/models"
 	"os"
+	"time"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,8 +18,24 @@ func ConnectDatabase() {
 }
 
 func ConnectTestDatabase() {
-	dsn := getDSN("olxkz_test")
-	connect(dsn)
+	host := "localhost"
+	port := "5433"
+	user := "postgres"
+	password := "postgres"
+	dbname := "olxkz_test"
+
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Almaty",
+		host, user, password, dbname, port,
+	)
+
+	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("Failed to connect to test database: " + err.Error())
+	}
+
+	DB = database
+	DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Product{})
 }
 
 func getDSN(dbname string) string {
@@ -31,8 +49,16 @@ func getDSN(dbname string) string {
 
 func connect(dsn string) {
 	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	for i := 0; i < 10; i++ {
+		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		fmt.Printf("Попытка подключения #%d неудачна: %s\n", i+1, err.Error())
+		time.Sleep(2 * time.Second)
+	}
 	if err != nil {
 		panic("Ошибка подключения к базе данных: " + err.Error())
 	}
+
 }

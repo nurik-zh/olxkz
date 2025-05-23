@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"olxkz/config"
 	"olxkz/middleware"
-	"olxkz/models"
+	models2 "olxkz/models"
 	"strconv"
 )
 
@@ -22,7 +22,7 @@ func RegisterFavoriteRoutes(r *gin.Engine) {
 func GetFavorites(c *gin.Context) {
 	userID := c.GetUint("userID")
 
-	var favorites []models.Favorite
+	var favorites []models2.Favorite
 	err := config.DB.Preload("Product").Where("user_id = ?", userID).Find(&favorites).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Не удалось получить избранное"})
@@ -30,7 +30,7 @@ func GetFavorites(c *gin.Context) {
 	}
 
 	// Возвращаем только данные продукта
-	var products []models.Product
+	var products []models2.Product
 	for _, fav := range favorites {
 		products = append(products, fav.Product)
 	}
@@ -46,7 +46,7 @@ func AddToFavorites(c *gin.Context) {
 		return
 	}
 
-	fav := models.Favorite{
+	fav := models2.Favorite{
 		UserID:    userID,
 		ProductID: uint(productId),
 	}
@@ -63,6 +63,6 @@ func RemoveFromFavorites(c *gin.Context) {
 		return
 	}
 
-	config.DB.Where("user_id = ? AND product_id = ?", userID, productId).Delete(&models.Favorite{})
+	config.DB.Where("user_id = ? AND product_id = ?", userID, productId).Delete(&models2.Favorite{})
 	c.JSON(http.StatusOK, gin.H{"message": "Удалено из избранного"})
 }
